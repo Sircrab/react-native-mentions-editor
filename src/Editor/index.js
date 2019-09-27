@@ -202,10 +202,7 @@ export class Editor extends React.Component {
          * and extract the remaining part
         */
         let remStr = inputText
-            .substr((menIndex + 1 + this.state.keyword.length))
-            .replace(/\s+/, '\x01')
-            .split('\x01')[1] || '';
-
+            .substr((menIndex + this.state.keyword.length))
         /**
          * check if there are any adjecent mentions
          * subtracted in current selection.
