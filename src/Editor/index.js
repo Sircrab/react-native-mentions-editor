@@ -25,7 +25,7 @@ export class Editor extends React.Component {
         toggleEditor: PropTypes.func,
         showMentions: PropTypes.bool,
         onHideMentions: PropTypes.func,
-        editorStyles: PropTypes.object, 
+        editorStyles: PropTypes.object,
         placeholder: PropTypes.placeholder,
         renderMentionList: PropTypes.oneOfType([
             PropTypes.func,
@@ -36,11 +36,11 @@ export class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.mentionsMap = new Map();
-        let msg = '' 
-        let formattedMsg = '' 
+        let msg = ''
+        let formattedMsg = ''
         if(props.initialValue && (props.initialValue !== '')){
-            msg = props.initialValue; 
-            formattedMsg = this.formatTextWithMentions(props.initialValue); 
+            msg = props.initialValue;
+            formattedMsg = this.formatTextWithMentions(props.initialValue);
         }
         this.state = {
             clearInput: props.clearInput,
@@ -97,7 +97,7 @@ export class Editor extends React.Component {
         }
 
         if (EU.whenTrue(this.props, prevProps, "showMentions")) {
-            //don't need to close on false; user show select it. 
+            //don't need to close on false; user show select it.
             this.onChange(this.state.inputText, true);
         }
     }
@@ -145,7 +145,7 @@ export class Editor extends React.Component {
     identifyKeyword(inputText) {
         /**
          * filter the mentions list
-         * according to what user type with 
+         * according to what user type with
          * @ char e.g. @billroy
          */
         if (this.isTrackingStarted) {
@@ -166,7 +166,7 @@ export class Editor extends React.Component {
 
     checkForMention(inputText, selection) {
         /**
-         * Open mentions list if user 
+         * Open mentions list if user
          * start typing @ in the string anywhere.
          */
         const menIndex = (selection.start - 1);
@@ -175,9 +175,10 @@ export class Editor extends React.Component {
         const wordBoundry = (this.state.triggerLocation === 'new-word-only') ?
             this.previousChar.trim().length === 0 :
             true;
-        if (lastChar === this.state.trigger && wordBoundry) {
+        if (lastChar === this.state.trigger && wordBoundry && !this.state.isTrackingStarted) {
             this.startTracking(menIndex);
-        } else if (lastChar.trim() === "" && (this.state.isTrackingStarted)) {
+        }
+        else if (lastChar.trim() === "" && this.previousChar === this.state.trigger && (this.state.isTrackingStarted)) {
             this.stopTracking();
         }
         this.previousChar = lastChar;
@@ -189,7 +190,7 @@ export class Editor extends React.Component {
          * extractInitialAndRemainingStrings
          * this function extract the initialStr and remainingStr
          * at the point of new Mention string.
-         * Also updates the remaining string if there 
+         * Also updates the remaining string if there
          * are any adjcent mentions text with the new one.
          */
         // const {inputText, menIndex} = this.state;
@@ -197,19 +198,19 @@ export class Editor extends React.Component {
         if (!EU.isEmpty(initialStr)) {
             initialStr = initialStr + " ";
         }
-        /** 
-         * remove the characters adjcent with @ sign 
-         * and extract the remaining part          
+        /**
+         * remove the characters adjcent with @ sign
+         * and extract the remaining part
         */
         let remStr = inputText
             .substr((menIndex + 1))
             .replace(/\s+/, '\x01')
             .split('\x01')[1] || '';
 
-        /** 
+        /**
          * check if there are any adjecent mentions
          * subtracted in current selection.
-         * add the adjcent mentions 
+         * add the adjcent mentions
          * @tim@nic
          * add nic back
          */
@@ -274,19 +275,19 @@ export class Editor extends React.Component {
             /**
              * if user make or remove selection
              * Automatically add or remove mentions
-             * in the selection.         
+             * in the selection.
              */
             newSelc = EU.addMenInSelection(newSelc, prevSelc, this.mentionsMap);
         }
         // else{
         /**
          * Update cursor to not land on mention
-         * Automatically skip mentions boundry             
+         * Automatically skip mentions boundry
          */
         // setTimeout(()=>{
 
         // })
-        // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);                            
+        // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);
         // }
         this.setState({ selection: newSelc });
     }
@@ -300,8 +301,8 @@ export class Editor extends React.Component {
     formateText(inputText) {
         /**
          * Format the Mentions
-         * and display them with 
-         * the different styles         
+         * and display them with
+         * the different styles
          */
 
         if (inputText === '' || !this.mentionsMap.size) return inputText;
@@ -357,9 +358,9 @@ export class Editor extends React.Component {
         }
         if (text.length < prevText.length) {
             /**
-             * if user is back pressing and it 
-             * deletes the mention remove it from 
-             * actual string. 
+             * if user is back pressing and it
+             * deletes the mention remove it from
+             * actual string.
              */
             // debugger;
 
@@ -377,7 +378,7 @@ export class Editor extends React.Component {
                     this.mentionsMap.delete(key);
                     /**
                      * don't need to worry about multi-char selection
-                     * because our selection automatically select the 
+                     * because our selection automatically select the
                      * whole mention string.
                      */
                     const initial = text.substring(0, (key[0]));//mention start index
@@ -396,9 +397,9 @@ export class Editor extends React.Component {
                 });
             }
             /**
-             * update indexes on charcters remove 
-             * no need to worry about totalSelection End. 
-             * We already removed deleted mentions from the actual string.              
+             * update indexes on charcters remove
+             * no need to worry about totalSelection End.
+             * We already removed deleted mentions from the actual string.
              * */
             this.updateMentionsMap({
                 start: selection.end,
@@ -414,7 +415,7 @@ export class Editor extends React.Component {
                 end: text.length
             }, charAdded, true);
             /**
-             * if user type anything on the mention            
+             * if user type anything on the mention
              * remove the mention from the mentions array
              * */
             if (selection.start === selection.end) {
@@ -432,15 +433,15 @@ export class Editor extends React.Component {
             // selection,
         });
         this.checkForMention(text, selection);
-        // const text = `${initialStr} @[${user.username}](id:${user.id}) ${remStr}`; //'@[__display__](__id__)' ///find this trigger parsing from react-mentions        
+        // const text = `${initialStr} @[${user.username}](id:${user.id}) ${remStr}`; //'@[__display__](__id__)' ///find this trigger parsing from react-mentions
 
         this.sendMessageToFooter(text);
     }
 
     onContentSizeChange = (evt) => {
         /**
-         * this function will dynamically 
-         * calculate editor height w.r.t 
+         * this function will dynamically
+         * calculate editor height w.r.t
          * the size of text in the input.
          */
         if (evt) {
@@ -455,16 +456,16 @@ export class Editor extends React.Component {
             editorHeight = editorHeight + (height);
             this.setState({
                 editorHeight
-            });            
+            });
         }
-    }    
+    }
 
     render() {
         const { props, state } = this;
         const {editorStyles = {}} = props;
-        
+
         if (!props.showEditor) return null;
-        
+
         const mentionListProps= {
             list: props.list,
             keyword: state.keyword,
@@ -499,8 +500,8 @@ export class Editor extends React.Component {
                                     <Text style={[styles.formmatedText, editorStyles.inputMaskText]}>
                                         {state.formattedText}
                                     </Text>
-                                    : 
-                                    <Text style={[styles.placeholderText, editorStyles.placeholderText]}> 
+                                    :
+                                    <Text style={[styles.placeholderText, editorStyles.placeholderText]}>
                                         {state.placeholder}
                                     </Text>
                                 }
@@ -519,12 +520,12 @@ export class Editor extends React.Component {
                                 selectionColor={'#000'}
                                 onSelectionChange={this.handleSelectionChange}
                                 placeholder="Type something..."
-                                onContentSizeChange={this.onContentSizeChange}                                
+                                onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
                             />
                         </View>
                     </ScrollView>
-                </View>                
+                </View>
             </View>
         );
     }
