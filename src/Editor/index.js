@@ -151,11 +151,11 @@ export class Editor extends React.Component {
         if (this.isTrackingStarted) {
             let pattern = null;
             if (this.state.triggerLocation === 'new-word-only') {
-                pattern = new RegExp(`\\B${this.state.trigger}[a-z0-9_-]+|\\B${this.state.trigger}`, `gi`);
+                pattern = new RegExp(`\\B${this.state.trigger}[a-z 0-9_-]+|\\B${this.state.trigger}`, `gi`);
             } else {//anywhere
-                pattern = new RegExp(`\\${this.state.trigger}[a-z0-9_-]+|\\${this.state.trigger}`, `i`);
+                pattern = new RegExp(`\\${this.state.trigger}[a-z 0-9_-]+|\\${this.state.trigger}`, `i`);
             }
-            const str = inputText.substr(this.menIndex);
+            const str = inputText.substring(this.menIndex, this.state.selection.start);
             const keywordArray = str.match(pattern);
             if (keywordArray && !!keywordArray.length) {
                 const lastKeyword = keywordArray[keywordArray.length - 1];
@@ -202,7 +202,7 @@ export class Editor extends React.Component {
          * and extract the remaining part
         */
         let remStr = inputText
-            .substr((menIndex + 1))
+            .substr((menIndex + 1 + this.state.keyword.length))
             .replace(/\s+/, '\x01')
             .split('\x01')[1] || '';
 
@@ -235,7 +235,6 @@ export class Editor extends React.Component {
          */
         const { inputText, menIndex } = this.state;
         const { initialStr, remStr } = this.getInitialAndRemainingStrings(inputText, menIndex);
-
         const username = `@${user.username}`;
         const text = `${initialStr}${username} ${remStr}`;
         //'@[__display__](__id__)' ///find this trigger parsing from react-mentions
