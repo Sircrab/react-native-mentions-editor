@@ -177,8 +177,7 @@ export class Editor extends React.Component {
             true;
         if (lastChar === this.state.trigger && wordBoundry && !this.state.isTrackingStarted) {
             this.startTracking(menIndex);
-        }
-        else if (lastChar.trim() === "" && this.previousChar === this.state.trigger && (this.state.isTrackingStarted)) {
+        } else if (lastChar.trim() === "" && this.previousChar === this.state.trigger && (this.state.isTrackingStarted)) {
             this.stopTracking();
         }
         this.previousChar = lastChar;
