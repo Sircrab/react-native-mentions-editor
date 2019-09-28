@@ -201,6 +201,7 @@ export class Editor extends React.Component {
          * remove the characters adjcent with @ sign
          * and extract the remaining part
         */
+
         let remStr = inputText
             .substr((menIndex + this.state.keyword.length))
         /**
@@ -284,7 +285,12 @@ export class Editor extends React.Component {
         // })
         // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);
         // }
+        if(Platform.OS === 'android'){
+          newSelc.start = newSelc.start + 1
+          newSelc.end = newSelc.end + 1
+        }
         this.setState({ selection: newSelc });
+
     }
 
     formatMentionNode = (txt, key) => (
@@ -505,7 +511,7 @@ export class Editor extends React.Component {
                                 ref={input => props.onRef && props.onRef(input)}
                                 style={[styles.input, editorStyles.input]}
                                 multiline
-                                autoFocus
+                                caretHidden={false}
                                 numberOfLines={100}
                                 name={'message'}
                                 value={state.inputText}
