@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types';
 
 import {
     View,
@@ -16,22 +15,6 @@ import MentionList from '../MentionList';
 
 
 export class Editor extends React.Component {
-    static propTypes = {
-        list: PropTypes.array,
-        initialValue: PropTypes.string,
-        clearInput: PropTypes.bool,
-        onChange: PropTypes.func,
-        showEditor: PropTypes.bool,
-        toggleEditor: PropTypes.func,
-        showMentions: PropTypes.bool,
-        onHideMentions: PropTypes.func,
-        editorStyles: PropTypes.object,
-        placeholder: PropTypes.placeholder,
-        renderMentionList: PropTypes.oneOfType([
-            PropTypes.func,
-            PropTypes.null,
-        ]),
-    }
 
     constructor(props) {
         super(props);
@@ -476,7 +459,7 @@ export class Editor extends React.Component {
         };
 
         return (
-            <View styles={editorStyles.mainContainer}>
+            <View style={{flex: 1}}>
                 {
                     props.renderMentionList ?
                     props.renderMentionList(mentionListProps) : (
@@ -520,10 +503,11 @@ export class Editor extends React.Component {
                                 selection={this.state.selection}
                                 selectionColor={'#000'}
                                 onSelectionChange={this.handleSelectionChange}
-                                placeholder="Type something..."
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
-                            />
+                            >
+
+                            </TextInput>
                         </View>
                     </ScrollView>
                 </View>
