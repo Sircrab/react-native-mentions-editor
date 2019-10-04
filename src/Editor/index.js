@@ -250,7 +250,9 @@ export class Editor extends React.Component {
 
     handleSelectionChange = ({ nativeEvent: { selection } }) => {
         const prevSelc = this.state.selection;
+        console.log('prevSelc', prevSelc)
         let newSelc = { ...selection };
+        console.log('newSelc', newSelc)
         if (newSelc.start !== newSelc.end) {
             /**
              * if user make or remove selection
@@ -342,6 +344,7 @@ export class Editor extends React.Component {
             selection.start = selection.start + 1;
             selection.end = selection.end + 1;
         }
+        console.log('sel', selection)
         if (text.length < prevText.length) {
             /**
              * if user is back pressing and it
@@ -351,15 +354,19 @@ export class Editor extends React.Component {
             // debugger;
 
             let charDeleted = Math.abs(text.length - prevText.length);
+            if(Platform.OS === 'android') selection.start -= 1
             const totalSelection = {
                 start: selection.start,
                 end: charDeleted > 1 ? (selection.start + charDeleted) : selection.start
             };
+            console.log('totalSel', totalSelection)
             /**
              * REmove all the selected mentions
              */
             if (totalSelection.start === totalSelection.end) { //single char deleting
                 const key = EU.findMentionKeyInMap(this.mentionsMap, (totalSelection.start));
+                console.log('key', key)
+                console.log('map', this.mentionsMap)
                 if (key && key.length) {
                     this.mentionsMap.delete(key);
                     /**
