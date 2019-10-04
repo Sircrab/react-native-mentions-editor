@@ -138,7 +138,8 @@ export class Editor extends React.Component {
             } else {//anywhere
                 pattern = new RegExp(`\\${this.state.trigger}[a-z 0-9_-]+|\\${this.state.trigger}`, `i`);
             }
-            const str = inputText.substring(this.menIndex, this.state.selection.start);
+            const delta = Platform.OS === 'android' ? 1 : 0
+            const str = inputText.substring(this.menIndex, this.state.selection.start + delta);
             const keywordArray = str.match(pattern);
             if (keywordArray && !!keywordArray.length) {
                 const lastKeyword = keywordArray[keywordArray.length - 1];
@@ -154,7 +155,13 @@ export class Editor extends React.Component {
          */
         let menIndex = (selection.start - 1);
         // const lastChar = inputText.substr(inputText.length - 1);
-        if(Platform.OS === 'android') menIndex += 1
+        if(Platform.OS === 'android'){
+          if(selection.start === selection.end){
+            menIndex = selection.start
+          } else {
+            menIndex = selection.start - 1
+          }
+        }
         const lastChar = inputText.substr(menIndex, 1);
         const wordBoundry = (this.state.triggerLocation === 'new-word-only') ?
             this.previousChar.trim().length === 0 :
@@ -185,7 +192,6 @@ export class Editor extends React.Component {
          * remove the characters adjcent with @ sign
          * and extract the remaining part
         */
-
         let remStr = inputText
             .substr((menIndex + this.state.keyword.length))
         /**
@@ -250,9 +256,7 @@ export class Editor extends React.Component {
 
     handleSelectionChange = ({ nativeEvent: { selection } }) => {
         const prevSelc = this.state.selection;
-        console.log('prevSelc', prevSelc)
         let newSelc = { ...selection };
-        console.log('newSelc', newSelc)
         if (newSelc.start !== newSelc.end) {
             /**
              * if user make or remove selection
@@ -271,11 +275,6 @@ export class Editor extends React.Component {
         // })
         // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);
         // }
-        // if(Platform.OS === 'android'){
-        //   newSelc.start = newSelc.start + 1
-        //   newSelc.end = newSelc.end + 1
-        // }
-        // console.log('modifiedSelc', newSelc)
         this.setState({ selection: newSelc });
 
     }
@@ -344,7 +343,6 @@ export class Editor extends React.Component {
             selection.start = selection.start + 1;
             selection.end = selection.end + 1;
         }
-        console.log('sel', selection)
         if (text.length < prevText.length) {
             /**
              * if user is back pressing and it
@@ -359,14 +357,11 @@ export class Editor extends React.Component {
                 start: selection.start,
                 end: charDeleted > 1 ? (selection.start + charDeleted) : selection.start
             };
-            console.log('totalSel', totalSelection)
             /**
              * REmove all the selected mentions
              */
             if (totalSelection.start === totalSelection.end) { //single char deleting
                 const key = EU.findMentionKeyInMap(this.mentionsMap, (totalSelection.start));
-                console.log('key', key)
-                console.log('map', this.mentionsMap)
                 if (key && key.length) {
                     this.mentionsMap.delete(key);
                     /**
