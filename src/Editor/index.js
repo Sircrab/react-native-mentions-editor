@@ -486,6 +486,7 @@ export class Editor extends React.Component {
                                 ref={input => props.onRef && props.onRef(input)}
                                 style={[styles.input, editorStyles.input]}
                                 multiline
+                                autoFocus={props.autoFocus}
                                 caretHidden={false}
                                 numberOfLines={100}
                                 name={'message'}
@@ -498,7 +499,6 @@ export class Editor extends React.Component {
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
                             >
-
                             </TextInput>
                         </View>
                     </ScrollView>
