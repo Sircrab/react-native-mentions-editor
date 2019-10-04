@@ -152,8 +152,9 @@ export class Editor extends React.Component {
          * Open mentions list if user
          * start typing @ in the string anywhere.
          */
-        const menIndex = (selection.start - 1);
+        let menIndex = (selection.start - 1);
         // const lastChar = inputText.substr(inputText.length - 1);
+        if(Platform.OS === 'android') menIndex += 1
         const lastChar = inputText.substr(menIndex, 1);
         const wordBoundry = (this.state.triggerLocation === 'new-word-only') ?
             this.previousChar.trim().length === 0 :
@@ -268,10 +269,11 @@ export class Editor extends React.Component {
         // })
         // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);
         // }
-        if(Platform.OS === 'android'){
-          newSelc.start = newSelc.start + 1
-          newSelc.end = newSelc.end + 1
-        }
+        // if(Platform.OS === 'android'){
+        //   newSelc.start = newSelc.start + 1
+        //   newSelc.end = newSelc.end + 1
+        // }
+        // console.log('modifiedSelc', newSelc)
         this.setState({ selection: newSelc });
 
     }
@@ -460,18 +462,6 @@ export class Editor extends React.Component {
 
         return (
             <View style={{flex: 1}}>
-                {
-                    props.renderMentionList ?
-                    props.renderMentionList(mentionListProps) : (
-                        <MentionList
-                            list={props.list}
-                            keyword={state.keyword}
-                            isTrackingStarted={state.isTrackingStarted}
-                            onSuggestionTap={this.onSuggestionTap}
-                            editorStyles={editorStyles}
-                        />
-                    )
-                }
                 <View style={[styles.container, editorStyles.mainContainer]}>
 
                     <ScrollView ref={(scroll) => {this.scroll = scroll;}}
@@ -511,6 +501,18 @@ export class Editor extends React.Component {
                         </View>
                     </ScrollView>
                 </View>
+                {
+                    props.renderMentionList ?
+                    props.renderMentionList(mentionListProps) : (
+                        <MentionList
+                            list={props.list}
+                            keyword={state.keyword}
+                            isTrackingStarted={state.isTrackingStarted}
+                            onSuggestionTap={this.onSuggestionTap}
+                            editorStyles={editorStyles}
+                        />
+                    )
+                }
             </View>
         );
     }
