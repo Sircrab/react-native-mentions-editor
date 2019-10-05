@@ -3,8 +3,6 @@ import { StyleSheet, Platform } from 'react-native'
 export default StyleSheet.create({
     container: {
         backgroundColor: "#fff",
-        borderColor: "green",
-        borderWidth: 1,
         flex: 1,
     },
     editorContainer: {
