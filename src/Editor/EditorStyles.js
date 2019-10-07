@@ -1,41 +1,35 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 
 export default StyleSheet.create({
-    container: {                
+    container: {
         backgroundColor: "#fff",
-        borderColor: "green",
-        borderWidth: 1,
-        width:300
+        flex: 1,
     },
-    textContainer: {
-        alignSelf: 'stretch',
-        position: 'relative',
-        minHeight: 40,
-        maxHeight: 140,
+    editorContainer: {
+      flex: 1
     },
     input: {
         fontSize: 16,
-        color: '#000',
+        backgroundColor: 'transparent',
+        color: 'transparent',
         fontWeight: '400',
         paddingHorizontal: 20,
         minHeight: 40,
-        position: 'absolute',
-        top: 0,
-        color: 'transparent',
-        alignSelf: 'stretch',
-        width: '100%',
+        flex: 1,
+        zIndex: 20
     },
     formmatedTextWrapper: {
+        zIndex: 10,
         minHeight: 40,
         position: 'absolute',
         top: 0,
+        flex: 1,
         paddingHorizontal: 20,
-        paddingVertical: 5,
-        width: "100%",
+        paddingVertical: Platform.OS === 'android' ? 10 : 5
     },
     formmatedText: {
         fontSize: 16,
-        fontWeight: '400',                
+        fontWeight: '400',
     },
     mention: {
         fontSize: 16,
@@ -45,7 +39,7 @@ export default StyleSheet.create({
     },
     placeholderText: {
         color: 'rgba(0, 0, 0, 0.6)',
-        fontSize: 16,        
+        fontSize: 16,
     }
-     
+
 })

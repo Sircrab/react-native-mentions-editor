@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types';
 
 import {
     View,
@@ -16,22 +15,6 @@ import MentionList from '../MentionList';
 
 
 export class Editor extends React.Component {
-    static propTypes = {
-        list: PropTypes.array,
-        initialValue: PropTypes.string,
-        clearInput: PropTypes.bool,
-        onChange: PropTypes.func,
-        showEditor: PropTypes.bool,
-        toggleEditor: PropTypes.func,
-        showMentions: PropTypes.bool,
-        onHideMentions: PropTypes.func,
-        editorStyles: PropTypes.object,
-        placeholder: PropTypes.placeholder,
-        renderMentionList: PropTypes.oneOfType([
-            PropTypes.func,
-            PropTypes.null,
-        ]),
-    }
 
     constructor(props) {
         super(props);
@@ -155,7 +138,8 @@ export class Editor extends React.Component {
             } else {//anywhere
                 pattern = new RegExp(`\\${this.state.trigger}[a-z 0-9_-]+|\\${this.state.trigger}`, `i`);
             }
-            const str = inputText.substring(this.menIndex, this.state.selection.start);
+            const delta = Platform.OS === 'android' ? 1 : 0
+            const str = inputText.substring(this.menIndex, this.state.selection.start + delta);
             const keywordArray = str.match(pattern);
             if (keywordArray && !!keywordArray.length) {
                 const lastKeyword = keywordArray[keywordArray.length - 1];
@@ -169,8 +153,15 @@ export class Editor extends React.Component {
          * Open mentions list if user
          * start typing @ in the string anywhere.
          */
-        const menIndex = (selection.start - 1);
+        let menIndex = (selection.start - 1);
         // const lastChar = inputText.substr(inputText.length - 1);
+        if(Platform.OS === 'android'){
+          if(selection.start === selection.end){
+            menIndex = selection.start
+          } else {
+            menIndex = selection.start - 1
+          }
+        }
         const lastChar = inputText.substr(menIndex, 1);
         const wordBoundry = (this.state.triggerLocation === 'new-word-only') ?
             this.previousChar.trim().length === 0 :
@@ -201,7 +192,6 @@ export class Editor extends React.Component {
          * remove the characters adjcent with @ sign
          * and extract the remaining part
         */
-
         let remStr = inputText
             .substr((menIndex + this.state.keyword.length))
         /**
@@ -285,10 +275,6 @@ export class Editor extends React.Component {
         // })
         // newSelc = EU.moveCursorToMentionBoundry(newSelc, prevSelc, this.mentionsMap, this.isTrackingStarted);
         // }
-        if(Platform.OS === 'android'){
-          newSelc.start = newSelc.start + 1
-          newSelc.end = newSelc.end + 1
-        }
         this.setState({ selection: newSelc });
 
     }
@@ -366,6 +352,7 @@ export class Editor extends React.Component {
             // debugger;
 
             let charDeleted = Math.abs(text.length - prevText.length);
+            if(Platform.OS === 'android') selection.start -= 1
             const totalSelection = {
                 start: selection.start,
                 end: charDeleted > 1 ? (selection.start + charDeleted) : selection.start
@@ -476,19 +463,7 @@ export class Editor extends React.Component {
         };
 
         return (
-            <View styles={editorStyles.mainContainer}>
-                {
-                    props.renderMentionList ?
-                    props.renderMentionList(mentionListProps) : (
-                        <MentionList
-                            list={props.list}
-                            keyword={state.keyword}
-                            isTrackingStarted={state.isTrackingStarted}
-                            onSuggestionTap={this.onSuggestionTap}
-                            editorStyles={editorStyles}
-                        />
-                    )
-                }
+            <View style={{flex: 1}}>
                 <View style={[styles.container, editorStyles.mainContainer]}>
 
                     <ScrollView ref={(scroll) => {this.scroll = scroll;}}
@@ -511,6 +486,7 @@ export class Editor extends React.Component {
                                 ref={input => props.onRef && props.onRef(input)}
                                 style={[styles.input, editorStyles.input]}
                                 multiline
+                                autoFocus={props.autoFocus}
                                 caretHidden={false}
                                 numberOfLines={100}
                                 name={'message'}
@@ -520,13 +496,25 @@ export class Editor extends React.Component {
                                 selection={this.state.selection}
                                 selectionColor={'#000'}
                                 onSelectionChange={this.handleSelectionChange}
-                                placeholder="Type something..."
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
-                            />
+                            >
+                            </TextInput>
                         </View>
                     </ScrollView>
                 </View>
+                {
+                    props.renderMentionList ?
+                    props.renderMentionList(mentionListProps) : (
+                        <MentionList
+                            list={props.list}
+                            keyword={state.keyword}
+                            isTrackingStarted={state.isTrackingStarted}
+                            onSuggestionTap={this.onSuggestionTap}
+                            editorStyles={editorStyles}
+                        />
+                    )
+                }
             </View>
         );
     }
