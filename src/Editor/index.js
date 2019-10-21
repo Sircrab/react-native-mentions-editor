@@ -301,25 +301,28 @@ export class Editor extends React.Component {
         }
         this.mentionsMap.forEach((men, [start, end]) => {
             if (start > lastIndex) {
-                if (newLinePos <= start) {
-                    const titleText = inputText.substring(lastIndex, newLinePos);
+                const titleLimit = Math.min(newLinePos, start);
+                if (titleLimit > lastIndex) {
+                    const titleText = inputText.substring(lastIndex, titleLimit);
                     const title = (
                         <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
                     );
                     console.info('Adding title: ' + titleText);
                     formattedText.push(title);
-                    lastIndex = newLinePos;
+                    lastIndex = titleLimit;
                 }
-                const initialStr = inputText.substring(lastIndex, start);
-                console.info('Adding: ' + initialStr);
-                formattedText.push(initialStr);
+                if (start > lastIndex) {
+                    const initialStr = inputText.substring(lastIndex, start);
+                    console.info('Adding: ' + initialStr);
+                    formattedText.push(initialStr);
+                }
             }
             console.info('Adding mention: ' + `@${men.username}`);
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
         });
-        if (newLinePos >= lastIndex) {
+        if (newLinePos > lastIndex) {
             const titleText = inputText.substring(lastIndex, newLinePos);
             const title = (
                 <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
@@ -328,9 +331,11 @@ export class Editor extends React.Component {
             formattedText.push(title);
             lastIndex = newLinePos;
         }
-        const lastStr = inputText.substr(lastIndex);
-        console.info('Adding: ' + lastStr);
-        formattedText.push(lastStr);
+        if (inputText.length > lastIndex) {
+            const lastStr = inputText.substr(lastIndex);
+            console.info('Adding: ' + lastStr);
+            formattedText.push(lastStr);
+        }
         return formattedText;
     }
 
