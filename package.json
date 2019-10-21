@@ -17,7 +17,7 @@
     "react-native-mentions",
     "react-native-editor",
     "react-native-mentions-editor",
-    "react-native-mentions-textinput",    
+    "react-native-mentions-textinput",
     "react",
     "react native",
     "react native mentions",
@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/mrazadar/react-native-mentions-editor/issues"
   },
-  "homepage": "https://github.com/mrazadar/react-native-mentions-editor#readme"
+  "homepage": "https://github.com/mrazadar/react-native-mentions-editor#readme",
+  "dependencies": {
+    "xregexp": "^4.2.4"
+  }
 }
