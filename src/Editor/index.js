@@ -292,20 +292,45 @@ export class Editor extends React.Component {
          * the different styles
          */
 
-        if (inputText === '' || !this.mentionsMap.size) return inputText;
+        if (inputText === '') return inputText;
         const formattedText = [];
         let lastIndex = 0;
+        let newLinePos = inputText.search(/\n|\r/);
+        if (newLinePos === -1) {
+            newLinePos = inputText.length;
+        }
         this.mentionsMap.forEach((men, [start, end]) => {
-            const initialStr = start === 1 ? "" : inputText.substring(lastIndex, start);
-            lastIndex = (end + 1);
-            formattedText.push(initialStr);
+            if (start > lastIndex) {
+                const titleLimit = Math.min(newLinePos, start);
+                if (titleLimit > lastIndex) {
+                    const titleText = inputText.substring(lastIndex, titleLimit);
+                    const title = (
+                        <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
+                    );
+                    formattedText.push(title);
+                    lastIndex = titleLimit;
+                }
+                if (start > lastIndex) {
+                    const initialStr = inputText.substring(lastIndex, start);
+                    formattedText.push(initialStr);
+                }
+            }
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
-            if (EU.isKeysAreSame(EU.getLastKeyInMap(this.mentionsMap), [start, end])) {
-                const lastStr = inputText.substr(lastIndex);//remaining string
-                formattedText.push(lastStr);
-            }
+            lastIndex = (end + 1);
         });
+        if (newLinePos > lastIndex) {
+            const titleText = inputText.substring(lastIndex, newLinePos);
+            const title = (
+                <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
+            );
+            formattedText.push(title);
+            lastIndex = newLinePos;
+        }
+        if (inputText.length > lastIndex) {
+            const lastStr = inputText.substr(lastIndex);
+            formattedText.push(lastStr);
+        }
         return formattedText;
     }
 
@@ -494,7 +519,7 @@ export class Editor extends React.Component {
                                 onBlur={props.toggleEditor}
                                 onChangeText={this.onChange}
                                 selection={this.state.selection}
-                                selectionColor={'#000'}
+                                selectionColor="rgba(0, 0, 0, 0.5)"
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
