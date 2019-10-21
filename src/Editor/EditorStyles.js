@@ -42,6 +42,6 @@ export default StyleSheet.create({
     title: {
         fontSize: 17,
         fontWeight: '600',
-        paddingBottom: 16,
+        //paddingBottom: 16,
     }
 })

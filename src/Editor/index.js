@@ -300,11 +300,11 @@ export class Editor extends React.Component {
             if (start > lastIndex) {
                 if (newLinePos >= 0 && newLinePos <= start) {
                     const titleText = inputText.substring(lastIndex, newLinePos - 1);
-                    lastIndex = newLinePos + 1;
                     const title = (
-                        <Text style={styles.title}>{titleText}</Text>
+                        <Text key={`${lastIndex}-${newLinePos - 1}`} style={styles.title}>{titleText}</Text>
                     );
                     formattedText.push(title);
+                    lastIndex = newLinePos + 1;
                 }
                 const initialStr = inputText.substring(lastIndex, start);
                 formattedText.push(initialStr);
@@ -317,6 +317,7 @@ export class Editor extends React.Component {
             }
             lastIndex = (end + 1);
         });
+        console.info(formattedText);
         return formattedText;
     }
 
@@ -505,7 +506,6 @@ export class Editor extends React.Component {
                                 onBlur={props.toggleEditor}
                                 onChangeText={this.onChange}
                                 selection={this.state.selection}
-                                selectionColor={'#e0e0e0'}
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
