@@ -329,7 +329,7 @@ export class Editor extends React.Component {
             lastIndex = newLinePos;
         }
         const lastStr = inputText.substr(lastIndex);
-        console.indo('Adding: ' + lastStr);
+        console.info('Adding: ' + lastStr);
         formattedText.push(lastStr);
         console.info(formattedText);
         return formattedText;
