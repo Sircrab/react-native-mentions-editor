@@ -8,7 +8,7 @@ import {
     Platform,
     ScrollView,
 } from 'react-native';
-
+import XRegExp from 'xregexp'
 import EU from './EditorUtils';
 import styles from './EditorStyles';
 import MentionList from '../MentionList';
@@ -134,9 +134,9 @@ export class Editor extends React.Component {
         if (this.isTrackingStarted) {
             let pattern = null;
             if (this.state.triggerLocation === 'new-word-only') {
-                pattern = new RegExp(`\\B${this.state.trigger}[a-z 0-9_-]+|\\B${this.state.trigger}`, `gi`);
+                pattern = new XRegExp(`\\B${this.state.trigger}[\\pL 0-9_-’]+|\\B${this.state.trigger}`, `gi`);
             } else {//anywhere
-                pattern = new RegExp(`\\${this.state.trigger}[a-z 0-9_-]+|\\${this.state.trigger}`, `i`);
+                pattern = new XRegExp(`\\${this.state.trigger}[\\pL 0-9_-’]+|\\${this.state.trigger}`, `i`);
             }
             const delta = Platform.OS === 'android' ? 1 : 0
             const str = inputText.substring(this.menIndex, this.state.selection.start + delta);
