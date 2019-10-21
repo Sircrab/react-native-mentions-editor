@@ -292,10 +292,18 @@ export class Editor extends React.Component {
          * the different styles
          */
 
-        if (inputText === '' || !this.mentionsMap.size) return inputText;
+        if (inputText === '') return inputText;
+        if (!this.mentionsMap.size) {
+            return (
+                <Text style={styles.title}>{inputText}</Text>
+            )
+        }
         const formattedText = [];
         let lastIndex = 0;
         const newLinePos = inputText.search(/\n|\r/);
+        if (newLinePos === -1) {
+            newLinePos = inputText.length;
+        }
         this.mentionsMap.forEach((men, [start, end]) => {
             if (start > lastIndex) {
                 if (newLinePos >= 0 && newLinePos <= start) {
@@ -311,11 +319,11 @@ export class Editor extends React.Component {
             }
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
+            lastIndex = (end + 1);
             if (EU.isKeysAreSame(EU.getLastKeyInMap(this.mentionsMap), [start, end])) {
                 const lastStr = inputText.substr(lastIndex);//remaining string
                 formattedText.push(lastStr);
             }
-            lastIndex = (end + 1);
         });
         console.info(formattedText);
         return formattedText;
@@ -509,6 +517,7 @@ export class Editor extends React.Component {
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
+                                selectionColor="rgba(0, 0, 0, 0.5)"
                             >
                             </TextInput>
                         </View>
