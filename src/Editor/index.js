@@ -307,17 +307,17 @@ export class Editor extends React.Component {
                     const title = (
                         <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
                     );
-                    console.info('Adding title: ' + titleText);
+                    //console.info('Adding title: ' + titleText);
                     formattedText.push(title);
                     lastIndex = titleLimit;
                 }
                 if (start > lastIndex) {
                     const initialStr = inputText.substring(lastIndex, start);
-                    console.info('Adding: ' + initialStr);
+                    //console.info('Adding: ' + initialStr);
                     formattedText.push(initialStr);
                 }
             }
-            console.info('Adding mention: ' + `@${men.username}`);
+            //console.info('Adding mention: ' + `@${men.username}`);
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
@@ -327,13 +327,13 @@ export class Editor extends React.Component {
             const title = (
                 <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
             );
-            console.info('Adding title: ' + titleText);
+            //console.info('Adding title: ' + titleText);
             formattedText.push(title);
             lastIndex = newLinePos;
         }
         if (inputText.length > lastIndex) {
             const lastStr = inputText.substr(lastIndex);
-            console.info('Adding: ' + lastStr);
+            //console.info('Adding: ' + lastStr);
             formattedText.push(lastStr);
         }
         return formattedText;
@@ -524,10 +524,10 @@ export class Editor extends React.Component {
                                 onBlur={props.toggleEditor}
                                 onChangeText={this.onChange}
                                 selection={this.state.selection}
+                                selectionColor="rgba(0, 0, 0, 0.5)"
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
-                                selectionColor="rgba(0, 0, 0, 0.5)"
                             >
                             </TextInput>
                         </View>
