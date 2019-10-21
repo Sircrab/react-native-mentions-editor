@@ -307,17 +307,14 @@ export class Editor extends React.Component {
                     const title = (
                         <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
                     );
-                    //console.info('Adding title: ' + titleText);
                     formattedText.push(title);
                     lastIndex = titleLimit;
                 }
                 if (start > lastIndex) {
                     const initialStr = inputText.substring(lastIndex, start);
-                    //console.info('Adding: ' + initialStr);
                     formattedText.push(initialStr);
                 }
             }
-            //console.info('Adding mention: ' + `@${men.username}`);
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
@@ -327,13 +324,11 @@ export class Editor extends React.Component {
             const title = (
                 <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
             );
-            //console.info('Adding title: ' + titleText);
             formattedText.push(title);
             lastIndex = newLinePos;
         }
         if (inputText.length > lastIndex) {
             const lastStr = inputText.substr(lastIndex);
-            //console.info('Adding: ' + lastStr);
             formattedText.push(lastStr);
         }
         return formattedText;
