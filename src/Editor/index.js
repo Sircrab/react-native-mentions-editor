@@ -300,7 +300,7 @@ export class Editor extends React.Component {
         }
         const formattedText = [];
         let lastIndex = 0;
-        const newLinePos = inputText.search(/\n|\r/);
+        let newLinePos = inputText.search(/\n|\r/);
         if (newLinePos === -1) {
             newLinePos = inputText.length;
         }
