@@ -293,11 +293,6 @@ export class Editor extends React.Component {
          */
 
         if (inputText === '') return inputText;
-        if (!this.mentionsMap.size) {
-            return (
-                <Text style={styles.title}>{inputText}</Text>
-            )
-        }
         const formattedText = [];
         let lastIndex = 0;
         let newLinePos = inputText.search(/\n|\r/);
@@ -316,7 +311,7 @@ export class Editor extends React.Component {
                     lastIndex = newLinePos;
                 }
                 const initialStr = inputText.substring(lastIndex, start);
-                console.indo('Adding: ' + initialStr);
+                console.info('Adding: ' + initialStr);
                 formattedText.push(initialStr);
             }
             console.info('Adding mention: ' + `@${men.username}`);
