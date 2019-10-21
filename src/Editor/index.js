@@ -302,9 +302,9 @@ export class Editor extends React.Component {
         this.mentionsMap.forEach((men, [start, end]) => {
             if (start > lastIndex) {
                 if (newLinePos <= start) {
-                    const titleText = inputText.substring(lastIndex, newLinePos - 1);
+                    const titleText = inputText.substring(lastIndex, newLinePos);
                     const title = (
-                        <Text key={`${lastIndex}-${newLinePos - 1}`} style={styles.title}>{titleText}</Text>
+                        <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
                     );
                     console.info('Adding title: ' + titleText);
                     formattedText.push(title);
@@ -320,9 +320,9 @@ export class Editor extends React.Component {
             lastIndex = (end + 1);
         });
         if (newLinePos >= lastIndex) {
-            const titleText = inputText.substring(lastIndex, newLinePos - 1);
+            const titleText = inputText.substring(lastIndex, newLinePos);
             const title = (
-                <Text key={`${lastIndex}-${newLinePos - 1}`} style={styles.title}>{titleText}</Text>
+                <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
             );
             console.info('Adding title: ' + titleText);
             formattedText.push(title);
@@ -331,7 +331,6 @@ export class Editor extends React.Component {
         const lastStr = inputText.substr(lastIndex);
         console.info('Adding: ' + lastStr);
         formattedText.push(lastStr);
-        console.info(formattedText);
         return formattedText;
     }
 
