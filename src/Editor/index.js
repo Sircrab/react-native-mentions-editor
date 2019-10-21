@@ -306,25 +306,36 @@ export class Editor extends React.Component {
         }
         this.mentionsMap.forEach((men, [start, end]) => {
             if (start > lastIndex) {
-                if (newLinePos >= 0 && newLinePos <= start) {
+                if (newLinePos <= start) {
                     const titleText = inputText.substring(lastIndex, newLinePos - 1);
                     const title = (
                         <Text key={`${lastIndex}-${newLinePos - 1}`} style={styles.title}>{titleText}</Text>
                     );
+                    console.info('Adding title: ' + titleText);
                     formattedText.push(title);
-                    lastIndex = newLinePos + 1;
+                    lastIndex = newLinePos;
                 }
                 const initialStr = inputText.substring(lastIndex, start);
+                console.indo('Adding: ' + initialStr);
                 formattedText.push(initialStr);
             }
+            console.info('Adding mention: ' + `@${men.username}`);
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
-            if (EU.isKeysAreSame(EU.getLastKeyInMap(this.mentionsMap), [start, end])) {
-                const lastStr = inputText.substr(lastIndex);//remaining string
-                formattedText.push(lastStr);
-            }
         });
+        if (newLinePos >= lastIndex) {
+            const titleText = inputText.substring(lastIndex, newLinePos - 1);
+            const title = (
+                <Text key={`${lastIndex}-${newLinePos - 1}`} style={styles.title}>{titleText}</Text>
+            );
+            console.info('Adding title: ' + titleText);
+            formattedText.push(title);
+            lastIndex = newLinePos;
+        }
+        const lastStr = inputText.substr(lastIndex);
+        console.indo('Adding: ' + lastStr);
+        formattedText.push(lastStr);
         console.info(formattedText);
         return formattedText;
     }
