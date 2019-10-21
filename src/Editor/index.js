@@ -295,16 +295,27 @@ export class Editor extends React.Component {
         if (inputText === '' || !this.mentionsMap.size) return inputText;
         const formattedText = [];
         let lastIndex = 0;
+        const newLinePos = inputText.search(/\n|\r/);
         this.mentionsMap.forEach((men, [start, end]) => {
-            const initialStr = start === 1 ? "" : inputText.substring(lastIndex, start);
-            lastIndex = (end + 1);
-            formattedText.push(initialStr);
+            if (start > lastIndex) {
+                if (newLinePos >= 0 && newLinePos <= start) {
+                    const titleText = inputText.substring(lastIndex, newLinePos - 1);
+                    lastIndex = newLinePos + 1;
+                    const title = (
+                        <Text style={styles.title}>{titleText}</Text>
+                    );
+                    formattedText.push(title);
+                }
+                const initialStr = inputText.substring(lastIndex, start);
+                formattedText.push(initialStr);
+            }
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
             formattedText.push(formattedMention);
             if (EU.isKeysAreSame(EU.getLastKeyInMap(this.mentionsMap), [start, end])) {
                 const lastStr = inputText.substr(lastIndex);//remaining string
                 formattedText.push(lastStr);
             }
+            lastIndex = (end + 1);
         });
         return formattedText;
     }
@@ -494,7 +505,7 @@ export class Editor extends React.Component {
                                 onBlur={props.toggleEditor}
                                 onChangeText={this.onChange}
                                 selection={this.state.selection}
-                                selectionColor={'#000'}
+                                selectionColor={'#e0e0e0'}
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}

@@ -28,18 +28,20 @@ export default StyleSheet.create({
         paddingVertical: Platform.OS === 'android' ? 10 : 5
     },
     formmatedText: {
-        fontSize: 16,
-        fontWeight: '400',
+        fontSize: 17,
     },
     mention: {
-        fontSize: 16,
-        fontWeight: '400',
-        backgroundColor: 'rgba(36, 77, 201, 0.05)',
-        color: '#244dc9',
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: '#53B0FF',
     },
     placeholderText: {
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 16,
+    },
+    title: {
+        fontSize: 17,
+        fontWeight: '600',
+        paddingBottom: 16,
     }
-
 })
