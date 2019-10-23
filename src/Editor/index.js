@@ -361,9 +361,9 @@ export class Editor extends React.Component {
     }
 
     onChange = (inputText, fromAtBtn) => {
-        if(this.skipNextInput) {
-          this.skipNextInput = false
-          return
+        if (this.skipNextInput) {
+          this.skipNextInput = false;
+          return;
         }
         let text = inputText;
         const prevText = this.state.inputText;
@@ -480,9 +480,9 @@ export class Editor extends React.Component {
     }
 
     onKeyPress = event => {
-      if(this.state.isTrackingStarted && event.nativeEvent.key === 'Enter' && this.props.onReturnPressed) {
-        this.props.onReturnPressed()
-        this.skipNextInput = true
+      if (this.state.isTrackingStarted && event.nativeEvent.key === 'Enter' && this.props.onReturnPressed) {
+        this.props.onReturnPressed();
+        this.skipNextInput = true;
       }
     }
 
