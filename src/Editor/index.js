@@ -16,7 +16,7 @@ import MentionList from '../MentionList';
 
 export class Editor extends React.Component {
 
-    skipNextInput = false
+    skipNextInput = false;
 
     constructor(props) {
         super(props);
@@ -361,7 +361,7 @@ export class Editor extends React.Component {
     }
 
     onChange = (inputText, fromAtBtn) => {
-        if(this.skipNextInput){
+        if(this.skipNextInput) {
           this.skipNextInput = false
           return
         }
@@ -479,7 +479,7 @@ export class Editor extends React.Component {
         }
     }
 
-    _onKeyPress = event => {
+    onKeyPress = event => {
       if(this.state.isTrackingStarted && event.nativeEvent.key === 'Enter' && this.props.onReturnPressed) {
         this.props.onReturnPressed()
         this.skipNextInput = true
@@ -530,15 +530,13 @@ export class Editor extends React.Component {
                                 name={'message'}
                                 value={state.inputText}
                                 onBlur={props.toggleEditor}
-                                onKeyPress={this._onKeyPress}
+                                onKeyPress={this.onKeyPress}
                                 onChangeText={this.onChange}
                                 selection={this.state.selection}
                                 selectionColor="rgba(0, 0, 0, 0.5)"
                                 onSelectionChange={this.handleSelectionChange}
                                 onContentSizeChange={this.onContentSizeChange}
                                 scrollEnabled={false}
-                                keyboardType={'email-address'}
-                                returnKeyLabel={this.state.isTrackingStarted ? 'Add mention' : undefined}
                             >
                             </TextInput>
                         </View>
