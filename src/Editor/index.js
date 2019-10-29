@@ -246,7 +246,6 @@ export class Editor extends React.Component {
             }, charAdded, true
         );
         this.stopTracking();
-        console.log('here')
         this.setState({
             inputText: text,
             formattedText: this.formateText(text),
@@ -281,20 +280,16 @@ export class Editor extends React.Component {
 
     }
 
-    formatMentionNode = (txt, key) => (
-        <Text key={key} style={styles.mention}>
+    formatMentionNode = (txt, key, index) => (
+        <Text key={key} style={styles.mention} index={index}>
             {txt}
         </Text>
     )
 
     splitTextNodeAddMention(textNode, mentionIndex, inputText) {
-      console.log('foundElem', textNode)
       const start = parseInt(textNode.index)
       const end = start + textNode.children.length
-      const selection = this.state.selection.start
-      console.log('start', start)
-      console.log('end', end)
-      console.log('selection', selection)
+      const selection = Platform.OS === 'android' ? this.state.selection.start + 1 : this.state.selection.start
       const newNodes = []
       if(mentionIndex > start) {
         newNodes.push(
@@ -309,8 +304,6 @@ export class Editor extends React.Component {
           <Text key={`${selection}`} style={textNode.style} index={selection}>{inputText.substring(selection, end)}</Text>
         )
       }
-      console.log('newNodes', newNodes)
-
       return newNodes
     }
 
@@ -344,7 +337,7 @@ export class Editor extends React.Component {
                     formattedText.push(initialStr);
                 }
             }
-            const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}`);
+            const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}`, start);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
         });
@@ -362,18 +355,16 @@ export class Editor extends React.Component {
           );
         }
         if(this.isTrackingStarted) {
-          const currentMentionIndex = this.state.selection.start - this.state.keyword.length - 1
-          console.log('currentMention', currentMentionIndex)
-          console.log('pre- formattedText', formattedText)
+          const currentMentionIndex = this.state.menIndex
           if(formattedText.length === 1) {
             const newNodes = this.splitTextNodeAddMention(formattedText[0].props, currentMentionIndex, inputText)
             formattedText.splice(0,1,...newNodes);
           } else {
-            //Could be binary
+            //Could be binary search
             for(let i=0; i < formattedText.length - 1; i++) {
               const curElem = formattedText[i].props
               const nextElem = formattedText[i + 1].props
-              if(currentMentionIndex >= parseInt(curElem.index) && currentMentionIndex < parseInt(nextElem.index)) {
+              if(currentMentionIndex >= curElem.index && currentMentionIndex < nextElem.index) {
                 const newNodes = this.splitTextNodeAddMention(curElem, currentMentionIndex, inputText)
                 formattedText.splice(i,1,...newNodes);
                 return formattedText
