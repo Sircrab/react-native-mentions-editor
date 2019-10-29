@@ -245,12 +245,11 @@ export class Editor extends React.Component {
                 end: text.length,
             }, charAdded, true
         );
-
+        this.stopTracking();
         this.setState({
             inputText: text,
             formattedText: this.formateText(text),
         });
-        this.stopTracking();
         this.sendMessageToFooter(text);
     }
 
@@ -281,11 +280,32 @@ export class Editor extends React.Component {
 
     }
 
-    formatMentionNode = (txt, key) => (
-        <Text key={key} style={styles.mention}>
+    formatMentionNode = (txt, key, index) => (
+        <Text key={key} style={styles.mention} index={index}>
             {txt}
         </Text>
     )
+
+    splitTextNodeAddMention(textNode, mentionIndex, inputText) {
+      const start = parseInt(textNode.index)
+      const end = start + textNode.children.length
+      const selection = Platform.OS === 'android' ? this.state.selection.start + 1 : this.state.selection.start
+      const newNodes = []
+      if(mentionIndex > start) {
+        newNodes.push(
+          <Text key={`${start}`} style={textNode.style} index={start}>{inputText.substring(start, mentionIndex)}</Text>
+        )
+      }
+      newNodes.push(
+        <Text key={`${mentionIndex}`} style={styles.mention} index={mentionIndex}>{inputText.substring(mentionIndex, selection)}</Text>
+      )
+      if(end > selection) {
+        newNodes.push(
+          <Text key={`${selection}`} style={textNode.style} index={selection}>{inputText.substring(selection, end)}</Text>
+        )
+      }
+      return newNodes
+    }
 
     formateText(inputText) {
         /**
@@ -307,31 +327,54 @@ export class Editor extends React.Component {
                 if (titleLimit > lastIndex) {
                     const titleText = inputText.substring(lastIndex, titleLimit);
                     const title = (
-                        <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
+                        <Text key={`${lastIndex}`} style={styles.title} index={lastIndex}>{titleText}</Text>
                     );
                     formattedText.push(title);
                     lastIndex = titleLimit;
                 }
                 if (start > lastIndex) {
-                    const initialStr = inputText.substring(lastIndex, start);
+                    const initialStr = (<Text key={`${lastIndex}`} index={lastIndex}>{inputText.substring(lastIndex, start)}</Text>);
                     formattedText.push(initialStr);
                 }
             }
-            const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}-${men.id}-${end}`);
+            const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}`, start);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
         });
         if (newLinePos > lastIndex) {
             const titleText = inputText.substring(lastIndex, newLinePos);
             const title = (
-                <Text key={`${lastIndex}-${newLinePos}`} style={styles.title}>{titleText}</Text>
+                <Text key={`${lastIndex}`} style={styles.title} index={lastIndex}>{titleText}</Text>
             );
             formattedText.push(title);
             lastIndex = newLinePos;
         }
         if (inputText.length > lastIndex) {
-            const lastStr = inputText.substr(lastIndex);
-            formattedText.push(lastStr);
+          formattedText.push(
+            <Text key={`${lastIndex}`} index={lastIndex}>{inputText.substr(lastIndex)}</Text>
+          );
+        }
+        if(this.isTrackingStarted) {
+          const currentMentionIndex = this.state.menIndex
+          if(formattedText.length === 1) {
+            const newNodes = this.splitTextNodeAddMention(formattedText[0].props, currentMentionIndex, inputText)
+            formattedText.splice(0,1,...newNodes);
+          } else {
+            //Could be binary search
+            for(let i=0; i < formattedText.length - 1; i++) {
+              const curElem = formattedText[i].props
+              const nextElem = formattedText[i + 1].props
+              if(currentMentionIndex >= curElem.index && currentMentionIndex < nextElem.index) {
+                const newNodes = this.splitTextNodeAddMention(curElem, currentMentionIndex, inputText)
+                formattedText.splice(i,1,...newNodes);
+                return formattedText
+              }
+            }
+            //If we get here, mention is in last element.
+            const lastIndex = formattedText.length - 1
+            const newNodes = this.splitTextNodeAddMention(formattedText[lastIndex].props, currentMentionIndex, inputText)
+            formattedText.splice(lastIndex,1,...newNodes);
+          }
         }
         return formattedText;
     }
