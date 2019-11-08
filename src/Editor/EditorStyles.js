@@ -33,6 +33,7 @@ export default StyleSheet.create({
     mention: {
         fontSize: 17,
         color: '#53B0FF',
+        backgroundColor: '#c9e6ff',
         // Simulate a fontWeight of bold
         textShadowColor: '#53B0FF',
         textShadowRadius: 1,
