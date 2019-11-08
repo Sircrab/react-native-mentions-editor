@@ -7,6 +7,7 @@ import {
     Animated,
     Platform,
     ScrollView,
+    TouchableOpacity
 } from 'react-native';
 import XRegExp from 'xregexp'
 import EU from './EditorUtils';
@@ -127,7 +128,7 @@ export class Editor extends React.Component {
         this.setState({ textInputHeight: this.props.textInputMinHeight });
     }
 
-    identifyKeyword(inputText) {
+    identifyKeyword(inputText, selection) {
         /**
          * filter the mentions list
          * according to what user type with
@@ -141,7 +142,7 @@ export class Editor extends React.Component {
                 pattern = new XRegExp(`\\${this.state.trigger}[\\pL 0-9_-’]+|\\${this.state.trigger}`, `i`);
             }
             const delta = Platform.OS === 'android' ? 1 : 0
-            const str = inputText.substring(this.menIndex, this.state.selection.start + delta);
+            const str = inputText.substring(this.menIndex, selection.start + delta);
             const keywordArray = str.match(pattern);
             if (keywordArray && !!keywordArray.length) {
                 const lastKeyword = keywordArray[keywordArray.length - 1];
@@ -174,7 +175,7 @@ export class Editor extends React.Component {
             this.stopTracking();
         }
         this.previousChar = lastChar;
-        this.identifyKeyword(inputText);
+        this.identifyKeyword(inputText, selection);
     }
 
     getInitialAndRemainingStrings(inputText, menIndex) {
@@ -411,7 +412,7 @@ export class Editor extends React.Component {
         let text = inputText;
         const prevText = this.state.inputText;
         let selection = { ...this.state.selection };
-        if (fromAtBtn) {
+        if (fromAtBtn && Platform.OS !== 'android') {
             //update selection but don't set in state
             //it will be auto set by input
             selection.start = selection.start + 1;
@@ -529,6 +530,10 @@ export class Editor extends React.Component {
       }
     }
 
+    onMentionButtonPressed = () => {
+      this.onChange(this.state.inputText + this.state.trigger, true)
+    }
+
     render() {
         const { props, state } = this;
         const {editorStyles = {}} = props;
@@ -542,7 +547,14 @@ export class Editor extends React.Component {
             onSuggestionTap: this.onSuggestionTap.bind(this),
             editorStyles,
         };
-
+        const atButton = !state.isTrackingStarted ?
+          (
+            <TouchableOpacity style={styles.atButton} onPress={this.onMentionButtonPressed}>
+              <Text>
+                @
+              </Text>
+            </TouchableOpacity>
+          ) : null
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.container, editorStyles.mainContainer]}>
@@ -597,6 +609,7 @@ export class Editor extends React.Component {
                         />
                     )
                 }
+                {atButton}
             </View>
         );
     }
