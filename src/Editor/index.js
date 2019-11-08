@@ -7,6 +7,7 @@ import {
     Animated,
     Platform,
     ScrollView,
+    TouchableOpacity
 } from 'react-native';
 import XRegExp from 'xregexp'
 import EU from './EditorUtils';
@@ -411,7 +412,7 @@ export class Editor extends React.Component {
         let text = inputText;
         const prevText = this.state.inputText;
         let selection = { ...this.state.selection };
-        if (fromAtBtn) {
+        if (fromAtBtn && Platform.OS !== 'android') {
             //update selection but don't set in state
             //it will be auto set by input
             selection.start = selection.start + 1;
@@ -548,11 +549,11 @@ export class Editor extends React.Component {
         };
         const atButton = !state.isTrackingStarted ?
           (
-            <View style={styles.atButton}>
-              <Text onPress={this.onMentionButtonPressed}>
+            <TouchableOpacity style={styles.atButton} onPress={this.onMentionButtonPressed}>
+              <Text>
                 @
               </Text>
-            </View>
+            </TouchableOpacity>
           ) : null
         return (
             <View style={{flex: 1}}>
