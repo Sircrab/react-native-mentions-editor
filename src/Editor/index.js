@@ -108,7 +108,7 @@ export class Editor extends React.Component {
             userId: mention.userId
           }
         )
-        plainLength += (mention.username.length - 1)
+        plainLength += (mention.username.length) + 1
       })
     }
 
