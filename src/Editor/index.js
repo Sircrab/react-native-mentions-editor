@@ -10,7 +10,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import XRegExp from 'xregexp'
-import EU from './EditorUtils';
+import EU, {formattedTextToPlain} from './EditorUtils';
 import styles from './EditorStyles';
 import MentionList from '../MentionList';
 
@@ -25,8 +25,9 @@ export class Editor extends React.Component {
         let msg = ''
         let formattedMsg = ''
         if(props.initialValue && (props.initialValue !== '')){
-            msg = props.initialValue;
-            formattedMsg = this.formatTextWithMentions(props.initialValue);
+            this.buildMentionsMap.bind(this)(props.initialValue)
+            msg = formattedTextToPlain(props.initialValue);
+            formattedMsg = this.formateText(props.initialValue);
         }
         this.state = {
             clearInput: props.clearInput,
@@ -86,6 +87,19 @@ export class Editor extends React.Component {
             //don't need to close on false; user show select it.
             this.onChange(this.state.inputText, true);
         }
+    }
+
+    buildMentionsMap(text) {
+      const mentions = EU.findMentions(text)
+      mentions.forEach(mention => {
+        this.mentionsMap.set(
+          [mention.start, mention.end],
+          {
+            username: mention.username,
+            userId: mention.userId
+          }
+        )
+      })
     }
 
     updateMentionsMap(selection, count, shouldAdd) {

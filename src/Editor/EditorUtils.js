@@ -1,22 +1,22 @@
 /**
- * EditorUtils contains helper 
+ * EditorUtils contains helper
  * functions for our Editor
 */
 
 export const displayTextWithMentions = (inputText, formatMentionNode) => {
     /**
-     * Use this function to parse mentions markup @[username](id) in the string value. 
+     * Use this function to parse mentions markup @[username](id) in the string value.
      */
     if(inputText === '') return null;
     const retLines = inputText.split("\n");
-    const formattedText = [];        
+    const formattedText = [];
     retLines.forEach((retLine, rowIndex) => {
         const mentions = EU.findMentions(retLine);
         if(mentions.length){
             let lastIndex = 0
             mentions.forEach((men, index) => {
                 const initialStr = retLine.substring(lastIndex, men.start);
-                lastIndex = (men.end+1);                    
+                lastIndex = (men.end+1);
                 formattedText.push(initialStr);
                 const formattedMention= formatMentionNode(`@${men.username}`, `${index}-${men.id}-${rowIndex}`);
                 formattedText.push(formattedMention);
@@ -27,10 +27,28 @@ export const displayTextWithMentions = (inputText, formatMentionNode) => {
             });
         }else{
             formattedText.push(retLine);
-        }            
+        }
         formattedText.push("\n");
-    });    
+    });
     return formattedText;
+}
+
+export const formattedTextToPlain = (inputText) => {
+  let output = '';
+  const mentions = EU.findMentions(inputText)
+  if(mentions.length  === 0) {
+    return inputText
+  }
+  let lastIdx = 0;
+  mentions.forEach(mention => {
+    output += inputText.substring(lastIdx, mention.start)
+    output += '@' + mention.username
+    lastIdx = mention.end + 1
+  })
+  if(lastIdx < inputText.length - 1) {
+    output += inputText.substr(lastIdx)
+  }
+  return output
 }
 
 export const EU = {
@@ -48,8 +66,8 @@ export const EU = {
         var newMap = new Map(map);
         const keys = EU.getSelectedMentionKeys(newMap, {start, end});
         keys.forEach(key => {
-            const newKey = shouldAdd ? 
-                           [(key[0]+diff), (key[1]+diff)] : 
+            const newKey = shouldAdd ?
+                           [(key[0]+diff), (key[1]+diff)] :
                            [(key[0]-diff), (key[1]-diff)];
             const value = newMap.get(key);
             newMap.delete(key);
@@ -59,16 +77,16 @@ export const EU = {
         return newMap;
     },
     getSelectedMentionKeys: (map, {start, end}) => {
-        // mention [2, 5], 
+        // mention [2, 5],
         // selection [3, 6]
-        const mantionKeys = [...map.keys()];   
+        const mantionKeys = [...map.keys()];
         const keys = mantionKeys.filter(([a,b])=>  (EU.between(a, start, end) || EU.between(b, start, end)))
         return keys;
-    }, 
+    },
     findMentionKeyInMap: (map, cursorIndex) => {
-        // const keys = Array.from(map.keys()) 
+        // const keys = Array.from(map.keys())
         // OR
-        const keys = [...map.keys()];     
+        const keys = [...map.keys()];
         const key =  keys.filter(([a,b])=>  (EU.between(cursorIndex, a, b)))[0];
         return key;
     },
@@ -76,10 +94,10 @@ export const EU = {
         /**
          * Both Mentions and Selections are 0-th index based in the strings
          * meaning their indexes in the string start from 0
-         * While user made a selection automatically add mention in the selection.         
+         * While user made a selection automatically add mention in the selection.
          */
         const sel = {...selection};
-        mentions.forEach((value, [menStart, menEnd])=>{            
+        mentions.forEach((value, [menStart, menEnd])=>{
             if (EU.diff(prevSelc.start, prevSelc.end) < EU.diff(sel.start, sel.end)){//user selecting.
                 if(EU.between(sel.start, menStart, menEnd)){//move sel to the start of mention
                     sel.start = menStart; //both men and selection is 0th index
@@ -94,7 +112,7 @@ export const EU = {
                 if(EU.between(sel.end, menStart, menEnd)){//deselect mention to the start of mention
                     sel.end = menStart;
                 }
-            } 
+            }
         });
         return sel;
     },
@@ -102,23 +120,23 @@ export const EU = {
         /**
          * Both Mentions and Selections are 0-th index based in the strings
          * moveCursorToMentionBoundry will move cursor to the start
-         * or to the end of mention based on user traverse direction. 
+         * or to the end of mention based on user traverse direction.
          */
-        
+
         const sel = {...selection};
         if(isTrackingStarted) return sel;
-        mentions.forEach((value, [menStart, menEnd])=>{            
+        mentions.forEach((value, [menStart, menEnd])=>{
             if (prevSelc.start > sel.start){//traversing Right -to- Left  <=
                 if(EU.between(sel.start, menStart, menEnd)){//move cursor to the start of mention
-                    sel.start = menStart; 
-                    sel.end = menStart; 
-                }                 
+                    sel.start = menStart;
+                    sel.end = menStart;
+                }
             }else{ //traversing Left -to- Right =>
                 if(EU.between((sel.start-1), menStart, menEnd)){ //move cursor to the end of selection
                     sel.start = (menEnd+1);
                     sel.end = (menEnd+1);
-                }                
-            } 
+                }
+            }
         });
         return sel;
     },
@@ -132,13 +150,13 @@ export const EU = {
          * meaning their indexes in the string start from 0
          * findMentions finds starting and ending positions of mentions in the given text
          * @param val string to parse to find mentions
-         * @returns list of found mentions 
+         * @returns list of found mentions
          */
         let reg = /@\[([^\]]+?)\]\(id:([^\]]+?)\)/igm;
         let indexes = [];
         while (match = reg.exec(val)) {
             indexes.push({
-                start: match.index, 
+                start: match.index,
                 end: (reg.lastIndex-1),
                 username: match[1],
                 userId: match[2],
@@ -160,8 +178,8 @@ export const EU = {
          * previous prop
          */
         return next[key] && next[key] !== current[key];
-    },    
-    displayTextWithMentions: displayTextWithMentions     
+    },
+    displayTextWithMentions: displayTextWithMentions
 }
 
 export default EU;
