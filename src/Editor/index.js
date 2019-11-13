@@ -24,10 +24,15 @@ export class Editor extends React.Component {
         this.mentionsMap = new Map();
         let msg = ''
         let formattedMsg = ''
+        let startSel = 0;
+        let endSel = 0;
         if(props.initialValue && (props.initialValue !== '')){
             this.buildMentionsMap.bind(this)(props.initialValue)
-            msg = formattedTextToPlain(props.initialValue);
-            formattedMsg = this.formateText(props.initialValue);
+            const plainText = formattedTextToPlain(props.initialValue);
+            msg = plainText
+            formattedMsg = this.formateText(plainText);
+            startSel = plainText.length
+            endSel = startSel
         }
         this.state = {
             clearInput: props.clearInput,
@@ -40,8 +45,8 @@ export class Editor extends React.Component {
             triggerLocation: 'anywhere', //'new-words-only', //anywhere
             trigger: '@',
             selection: {
-                start: 0,
-                end: 0
+                start: startSel,
+                end: endSel
             },
             menIndex: 0,
             showMentions: false,
@@ -91,14 +96,19 @@ export class Editor extends React.Component {
 
     buildMentionsMap(text) {
       const mentions = EU.findMentions(text)
+      let plainLength = 0
+      let lastIdx = 0
       mentions.forEach(mention => {
+        plainLength += mention.start - lastIdx
+        lastIdx = mention.end + 1
         this.mentionsMap.set(
-          [mention.start, mention.end],
+          [plainLength, plainLength + (mention.username.length)],
           {
             username: mention.username,
             userId: mention.userId
           }
         )
+        plainLength += (mention.username.length - 1)
       })
     }
 
@@ -483,7 +493,6 @@ export class Editor extends React.Component {
                 end: prevText.length
             }, charDeleted, false);
         } else {
-
             //update indexes on new charcter add
 
             let charAdded = Math.abs(text.length - prevText.length);
