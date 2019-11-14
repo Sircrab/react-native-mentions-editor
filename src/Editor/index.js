@@ -24,15 +24,11 @@ export class Editor extends React.Component {
         this.mentionsMap = new Map();
         let msg = ''
         let formattedMsg = ''
-        let startSel = 0;
-        let endSel = 0;
         if(props.initialValue && (props.initialValue !== '')){
             this.buildMentionsMap.bind(this)(props.initialValue)
             const plainText = formattedTextToPlain(props.initialValue);
             msg = plainText
             formattedMsg = this.formateText(plainText);
-            startSel = plainText.length
-            endSel = startSel
         }
         this.state = {
             clearInput: props.clearInput,
@@ -45,8 +41,8 @@ export class Editor extends React.Component {
             triggerLocation: 'anywhere', //'new-words-only', //anywhere
             trigger: '@',
             selection: {
-                start: startSel,
-                end: endSel
+                start: 0,
+                end: 0
             },
             menIndex: 0,
             showMentions: false,
