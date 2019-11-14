@@ -10,7 +10,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import XRegExp from 'xregexp'
-import EU, {formattedTextToPlain} from './EditorUtils';
+import EU from './EditorUtils';
 import styles from './EditorStyles';
 import MentionList from '../MentionList';
 
@@ -25,10 +25,9 @@ export class Editor extends React.Component {
         let msg = ''
         let formattedMsg = ''
         if(props.initialValue && (props.initialValue !== '')){
-            this.buildMentionsMap.bind(this)(props.initialValue)
-            const plainText = formattedTextToPlain(props.initialValue);
-            msg = plainText
-            formattedMsg = this.formateText(plainText);
+            this.buildMentionsMap(props.initialValue)
+            msg = EU.formattedTextToPlain(props.initialValue)
+            formattedMsg = this.formateText(msg);
         }
         this.state = {
             clearInput: props.clearInput,

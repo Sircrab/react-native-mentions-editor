@@ -39,14 +39,14 @@ export const formattedTextToPlain = (inputText) => {
   if(mentions.length  === 0) {
     return inputText
   }
-  let lastIdx = 0;
-  mentions.forEach(mention => {
-    output += inputText.substring(lastIdx, mention.start)
+  let currentIdx = 0;
+  for(mention of mentions) {
+    output += inputText.substring(currentIdx, mention.start)
     output += '@' + mention.username
-    lastIdx = mention.end + 1
-  })
-  if(lastIdx < inputText.length - 1) {
-    output += inputText.substr(lastIdx)
+    currentIdx = mention.end + 1
+  }
+  if(currentIdx < inputText.length) {
+    output += inputText.substring(currentIdx)
   }
   return output
 }
@@ -179,7 +179,8 @@ export const EU = {
          */
         return next[key] && next[key] !== current[key];
     },
-    displayTextWithMentions: displayTextWithMentions
+    displayTextWithMentions: displayTextWithMentions,
+    formattedTextToPlain: formattedTextToPlain
 }
 
 export default EU;
