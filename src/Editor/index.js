@@ -92,19 +92,19 @@ export class Editor extends React.Component {
     buildMentionsMap(text) {
       const mentions = EU.findMentions(text)
       let plainLength = 0
-      let lastIdx = 0
-      mentions.forEach(mention => {
-        plainLength += mention.start - lastIdx
-        lastIdx = mention.end + 1
+      let prevIdx = 0
+      for(mention of mentions) {
+        plainLength += mention.start - prevIdx
+        prevIdx = mention.end + 1
         this.mentionsMap.set(
           [plainLength, plainLength + (mention.username.length)],
           {
             username: mention.username,
-            userId: mention.userId
+            id: mention.userId
           }
         )
         plainLength += (mention.username.length) + 1
-      })
+      }
     }
 
     updateMentionsMap(selection, count, shouldAdd) {
