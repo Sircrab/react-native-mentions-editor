@@ -107,6 +107,37 @@ export class Editor extends React.Component {
       }
     }
 
+    resetStateWithText(text) {
+      this.mentionsMap = new Map();
+      let msg = ''
+      let formattedMsg = ''
+      this.buildMentionsMap(text)
+      msg = EU.formattedTextToPlain(text)
+      formattedMsg = this.formateText(msg);
+      this.state = {
+          clearInput: props.clearInput,
+          inputText: msg,
+          formattedText: formattedMsg,
+          keyword: '',
+          textInputHeight: "",
+          isTrackingStarted: false,
+          suggestionRowHeight: new Animated.Value(0),
+          triggerLocation: 'anywhere', //'new-words-only', //anywhere
+          trigger: '@',
+          selection: {
+              start: 0,
+              end: 0
+          },
+          menIndex: 0,
+          showMentions: false,
+          editorHeight: 72,
+          scrollContentInset: {top:0, bottom:0, left:0, right:0},
+          placeholder: props.placeholder || "Type something..."
+      };
+      this.isTrackingStarted = false;
+      this.previousChar = " ";
+    }
+
     updateMentionsMap(selection, count, shouldAdd) {
         this.mentionsMap = EU.updateRemainingMentionsIndexes(
             this.mentionsMap,
