@@ -25,8 +25,9 @@ export class Editor extends React.Component {
         let msg = ''
         let formattedMsg = ''
         if(props.initialValue && (props.initialValue !== '')){
-            msg = props.initialValue;
-            formattedMsg = this.formatTextWithMentions(props.initialValue);
+            this.buildMentionsMap(props.initialValue)
+            msg = EU.formattedTextToPlain(props.initialValue)
+            formattedMsg = this.formateText(msg);
         }
         this.state = {
             clearInput: props.clearInput,
@@ -86,6 +87,45 @@ export class Editor extends React.Component {
             //don't need to close on false; user show select it.
             this.onChange(this.state.inputText, true);
         }
+    }
+
+    buildMentionsMap(text) {
+      const mentions = EU.findMentions(text)
+      let plainLength = 0
+      let prevIdx = 0
+      for(mention of mentions) {
+        plainLength += mention.start - prevIdx
+        prevIdx = mention.end + 1
+        this.mentionsMap.set(
+          [plainLength, plainLength + (mention.username.length)],
+          {
+            username: mention.username,
+            id: mention.userId
+          }
+        )
+        plainLength += (mention.username.length) + 1
+      }
+    }
+
+    resetStateWithText(text) {
+      this.mentionsMap = new Map();
+      let msg = ''
+      let formattedMsg = ''
+      this.buildMentionsMap(text)
+      msg = EU.formattedTextToPlain(text)
+      formattedMsg = this.formateText(msg);
+      this.setState({
+          clearInput: this.props.clearInput,
+          inputText: msg,
+          formattedText: formattedMsg,
+          keyword: '',
+          isTrackingStarted: false,
+          menIndex: 0,
+          showMentions: false,
+      });
+      this.isTrackingStarted = false;
+      this.previousChar = " ";
+      this.forceUpdate()
     }
 
     updateMentionsMap(selection, count, shouldAdd) {
@@ -469,7 +509,6 @@ export class Editor extends React.Component {
                 end: prevText.length
             }, charDeleted, false);
         } else {
-
             //update indexes on new charcter add
 
             let charAdded = Math.abs(text.length - prevText.length);
