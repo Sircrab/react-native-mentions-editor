@@ -358,38 +358,15 @@ export class Editor extends React.Component {
         if (inputText === '') return inputText;
         const formattedText = [];
         let lastIndex = 0;
-        let newLinePos = inputText.search(/\n|\r/);
-        if (newLinePos === -1) {
-            newLinePos = inputText.length;
-        }
         this.mentionsMap.forEach((men, [start, end]) => {
             if (start > lastIndex) {
-                const titleLimit = Math.min(newLinePos, start);
-                if (titleLimit > lastIndex) {
-                    const titleText = inputText.substring(lastIndex, titleLimit);
-                    const title = (
-                        <Text key={`${lastIndex}`} style={styles.title} index={lastIndex}>{titleText}</Text>
-                    );
-                    formattedText.push(title);
-                    lastIndex = titleLimit;
-                }
-                if (start > lastIndex) {
-                    const initialStr = (<Text key={`${lastIndex}`} index={lastIndex}>{inputText.substring(lastIndex, start)}</Text>);
-                    formattedText.push(initialStr);
-                }
+                const initialStr = (<Text key={`${lastIndex}`} index={lastIndex}>{inputText.substring(lastIndex, start)}</Text>);
+                formattedText.push(initialStr);
             }
             const formattedMention = this.formatMentionNode(`@${men.username}`, `${start}`, start);
             formattedText.push(formattedMention);
             lastIndex = (end + 1);
         });
-        if (newLinePos > lastIndex) {
-            const titleText = inputText.substring(lastIndex, newLinePos);
-            const title = (
-                <Text key={`${lastIndex}`} style={styles.title} index={lastIndex}>{titleText}</Text>
-            );
-            formattedText.push(title);
-            lastIndex = newLinePos;
-        }
         if (inputText.length > lastIndex) {
           formattedText.push(
             <Text key={`${lastIndex}`} index={lastIndex}>{inputText.substr(lastIndex)}</Text>

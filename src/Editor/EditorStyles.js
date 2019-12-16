@@ -42,13 +42,6 @@ export default StyleSheet.create({
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 16,
     },
-    title: {
-        fontSize: 17,
-        // Simulate a fontWeight of 600
-        textShadowColor: '#000000',
-        textShadowRadius: 1,
-        textShadowOffset: { width: -0.02, height: 0 },
-    },
     atButton: {
         textAlign: 'center',
         padding: 12,
