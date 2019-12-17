@@ -493,17 +493,6 @@ export class Editor extends React.Component {
                 start: selection.end,
                 end: text.length
             }, charAdded, true);
-            /**
-             * if user type anything on the mention
-             * remove the mention from the mentions array
-             * */
-            if (selection.start === selection.end) {
-                const key = EU.findMentionKeyInMap(this.mentionsMap, (selection.start - 1));
-                if (key && key.length) {
-                    this.mentionsMap.delete(key);
-                }
-            }
-
         }
 
         this.setState({
