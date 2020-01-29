@@ -41,17 +41,5 @@ export default StyleSheet.create({
     placeholderText: {
         color: 'rgba(0, 0, 0, 0.6)',
         fontSize: 16,
-    },
-    atButton: {
-        textAlign: 'center',
-        padding: 12,
-        fontSize: 17,
-        borderWidth: 1,
-        borderColor: '#D9D9D9',
-        backgroundColor: '#f3f3f3',
-        borderRadius: 8,
-        position: 'absolute',
-        bottom: 12,
-        left: 12
     }
 })

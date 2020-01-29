@@ -535,10 +535,6 @@ export class Editor extends React.Component {
       }
     }
 
-    onMentionButtonPressed = () => {
-      this.onChange(this.state.inputText + this.state.trigger, true)
-    }
-
     render() {
         const { props, state } = this;
         const {editorStyles = {}} = props;
@@ -552,14 +548,6 @@ export class Editor extends React.Component {
             onSuggestionTap: this.onSuggestionTap.bind(this),
             editorStyles,
         };
-        const atButton = !state.isTrackingStarted ?
-          (
-            <TouchableOpacity style={styles.atButton} onPress={this.onMentionButtonPressed}>
-              <Text>
-                @
-              </Text>
-            </TouchableOpacity>
-          ) : null
         return (
             <View style={{flex: 1}}>
                 <View style={[styles.container, editorStyles.mainContainer]}>
