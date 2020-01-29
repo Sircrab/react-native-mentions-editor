@@ -614,7 +614,6 @@ export class Editor extends React.Component {
                         />
                     )
                 }
-                {atButton}
             </View>
         );
     }
